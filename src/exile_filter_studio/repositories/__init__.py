@@ -1,0 +1,2 @@
+"""Camada de persistência SQLite."""
+

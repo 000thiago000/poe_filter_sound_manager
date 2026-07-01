@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "exile-filter-studio"
+version = "1.3.1"
+description = "Gerenciador desktop local de filtros e sons para Path of Exile"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "PySide6>=6.8,<7",
+    "requests>=2.32,<3",
+]
+
+[project.scripts]
+exile-filter-studio = "exile_filter_studio.app:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
