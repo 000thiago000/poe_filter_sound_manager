@@ -11,6 +11,7 @@ Aplicação desktop local para Windows e Linux que instala filtros do Path of Ex
 - validação de extensão, tamanho, conteúdo e blocos `Show`/`Hide`/`Minimal`;
 - pacotes de som e mapeamentos para Currency, Divination Cards, Unique Items, Maps, Scarabs, Essences, Fragments, Gems e High Value Items;
 - seletores de áudio em cartões responsivos, com o nome do arquivo ocupando uma linha inteira;
+- ativação automática da categoria ao escolher um áudio, com aviso para seleções antigas que ainda estejam desativadas;
 - categorias específicas do PoE 2: Waystones, Tablets, Omens, Runes/Soul Cores, Uncut Gems, Charms, Keys, Logbooks e Relics;
 - reprodução de WAV/MP3 pela camada multimídia do Qt;
 - aplicação de `CustomAlertSound` ou `CustomAlertSoundOptional`, substituindo alertas padrão anteriores no bloco;

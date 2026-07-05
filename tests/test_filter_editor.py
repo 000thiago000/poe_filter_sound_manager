@@ -173,6 +173,43 @@ Show # $type->currency $tier->s
             any(change.category == "Limpeza fora do mapeamento" for change in result.changes)
         )
 
+    def test_poe1_essences_take_priority_over_stackable_currency(self) -> None:
+        essence = """Show # $type->currency->essence $tier->t1
+    Class == "Stackable Currency"
+    BaseType == "Deafening Essence of Contempt" "Remnant of Corruption"
+    PlayAlertSound 2 300
+"""
+        rare_item_with_essence_mod = """Show # $type->equipment->rare
+    Class == "Body Armours"
+    HasExplicitMod "of the Essence" "Essences"
+    Rarity Rare
+"""
+        self.assertEqual("Essences", self.editor.classify_block(essence, "poe1"))
+        self.assertIsNone(self.editor.classify_block(rare_item_with_essence_mod, "poe1"))
+
+    def test_poe1_cards_and_essences_receive_their_own_sounds(self) -> None:
+        content = """Show # $type->currency->essence $tier->t2
+    Class == "Stackable Currency"
+    BaseType "Screaming Essence of"
+    PlayAlertSound 2 300
+
+Show # $type->divination $tier->t2
+    Class == "Divination Cards"
+    BaseType "The Doctor"
+    PlayAlertSound 1 300
+"""
+        result = self.editor.apply_mappings(
+            content,
+            [
+                SoundMapping("Essences", "ExileFilterStudio/essence.mp3", True, False),
+                SoundMapping("Divination Cards", "ExileFilterStudio/cards.mp3", True, False),
+            ],
+            game_version="poe1",
+        )
+        self.assertIn('CustomAlertSound "ExileFilterStudio/essence.mp3" 300', result.content)
+        self.assertIn('CustomAlertSound "ExileFilterStudio/cards.mp3" 300', result.content)
+        self.assertNotIn("PlayAlertSound", result.content)
+
 
 if __name__ == "__main__":
     unittest.main()

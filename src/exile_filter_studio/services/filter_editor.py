@@ -97,8 +97,6 @@ class FilterEditor:
 
         if re.search(r"^\s*rarity\s+(?:==?\s*)?unique\b", text, re.MULTILINE):
             return "Unique Items"
-        if re.search(r"^\s*class\s+.*currency", text, re.MULTILINE):
-            return "Currency"
 
         if game_version == "poe2":
             if re.search(r"^\s*(waystonetier)\b", text, re.MULTILINE) or re.search(
@@ -130,13 +128,39 @@ class FilterEditor:
                 return "Expedition Logbooks"
             if "$type->relics" in text:
                 return "Relics"
+            if re.search(r"^\s*class\s+.*currency", text, re.MULTILINE):
+                return "Currency"
             return None
 
-        if "scarab" in text:
+        show_line = rule_lines[0].lower() if rule_lines else ""
+        has_currency_class = bool(
+            re.search(r"^\s*class\s+.*currency", text, re.MULTILINE)
+        )
+        has_fragment_class = bool(
+            re.search(r"^\s*class\s+.*(?:map fragments|misc map items)", text, re.MULTILINE)
+        )
+        if "$type->fragments->scarabs" in show_line or (
+            has_fragment_class
+            and re.search(r"^\s*basetype\s+.*\bscarab\b", text, re.MULTILINE)
+        ):
             return "Scarabs"
-        if any(marker in text for marker in ("essence", "remnant of corruption")):
+        if (
+            "$type->currency->essence" in show_line
+            or "$tier->essence" in show_line
+            or re.search(r"^\s*class\s+.*\bessences?\b", text, re.MULTILINE)
+            or (
+                has_currency_class
+                and re.search(
+                    r"^\s*basetype\s+.*(?:\bessence of\b|\bremnant of corruption\b)",
+                    text,
+                    re.MULTILINE,
+                )
+            )
+        ):
             return "Essences"
-        if re.search(r"^\s*class\s+.*divination", text, re.MULTILINE):
+        if "$type->divination" in show_line or re.search(
+            r"^\s*class\s+.*divination", text, re.MULTILINE
+        ):
             return "Divination Cards"
         if any(marker in text for marker in ("map fragments", "fragment", "splinter", "breachstone", "invitation")):
             return "Fragments"
@@ -148,6 +172,8 @@ class FilterEditor:
             r"^\s*(gemlevel|transfiguredgem|alternatequality)\b", text, re.MULTILINE
         ):
             return "Gems"
+        if has_currency_class:
+            return "Currency"
         return None
 
     @staticmethod

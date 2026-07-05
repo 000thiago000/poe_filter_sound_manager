@@ -62,8 +62,12 @@ class MappingRow(QFrame):
         self.sound.setSizeAdjustPolicy(QComboBox.SizeAdjustPolicy.AdjustToMinimumContentsLengthWithIcon)
         self.sound.setToolTip("Selecione o arquivo de áudio para esta categoria")
         self.sound.currentTextChanged.connect(self.sound.setToolTip)
+        self.sound.activated.connect(self._sound_selected_by_user)
         layout.addLayout(header)
         layout.addWidget(self.sound)
+
+    def _sound_selected_by_user(self, _index: int) -> None:
+        self.active.setChecked(bool(self.sound.currentData()))
 
 
 class SoundMappingPage(QWidget):
@@ -311,5 +315,23 @@ class SoundMappingPage(QWidget):
             return False
 
     def save_and_apply(self) -> None:
+        inactive_with_sound = [
+            row for row in self.mapping_rows if row.sound.currentData() and not row.active.isChecked()
+        ]
+        if inactive_with_sound:
+            categories = ", ".join(row.category for row in inactive_with_sound)
+            answer = QMessageBox.question(
+                self,
+                "Sons selecionados, mas desativados",
+                f"Há sons escolhidos em categorias desativadas:\n\n{categories}\n\n"
+                "Deseja ativá-las antes de aplicar?",
+                QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel,
+                QMessageBox.Yes,
+            )
+            if answer == QMessageBox.Cancel:
+                return
+            if answer == QMessageBox.Yes:
+                for row in inactive_with_sound:
+                    row.active.setChecked(True)
         if self.save():
             self.apply_requested.emit()

@@ -17,7 +17,7 @@ ProgressCallback = Callable[[int], None]
 
 class FilterBladeService:
     MAX_DOWNLOAD_BYTES = 20 * 1024 * 1024
-    USER_AGENT = "ExileFilterStudio/1.3.1 (+local desktop client)"
+    USER_AGENT = "ExileFilterStudio/1.3.2 (+local desktop client)"
 
     @staticmethod
     def validate_download_url(url: str) -> str:
